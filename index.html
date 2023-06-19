@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>4択クイズゲーム</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    .choice-button {
+      display: block;
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h1>4択クイズゲーム</h1>
+
+  <div id="quiz-container">
+    <h2 id="question"></h2>
+    <div id="choices"></div>
+  </div>
+
+  <div id="result" style="display: none;">
+    <h2>結果</h2>
+    <p id="score"></p>
+    <p id="correct-answer"></p>
+  </div>
+
+  <script>
+    // クイズの問題と選択肢の定義
+    const quizData = [
+      {
+        question: "問題1 世界で最も多く話されている言語は何語でしょう？",
+        choices: ["英語", "スペイン語", "中国語", "日本語"],
+        correct: 2
+      },
+      {
+        question: "問題2 フランスのエッフェル塔の建設にかかった日数は何日でしょう？",
+        choices: ["465日", "730日", "1095日", "1825日"],
+        correct: 3
+      },
+      {
+        question: "問題3 オーストラリアの首都はどこでしょう？",
+        choices: ["シドニー", "メルボルン", "キャンベラ", "パース"],
+        correct: 2
+      }
+    ];
+
+    let currentQuestion = 0;
+    let score = 0;
+
+    const quizContainer = document.getElementById("quiz-container");
+    const questionElement = document.getElementById("question");
+    const choicesContainer = document.getElementById("choices");
+    const resultContainer = document.getElementById("result");
+    const scoreElement = document.getElementById("score");
+    const correctAnswerElement = document.getElementById("correct-answer");
+
+    function loadQuestion() {
+      const quiz = quizData[currentQuestion];
+      questionElement.textContent = quiz.question;
+
+      // 選択肢の表示
+      choicesContainer.innerHTML = "";
+      for (let i = 0; i < quiz.choices.length; i++) {
+        const choiceButton = document.createElement("button");
+        choiceButton.className = "choice-button";
+        choiceButton.textContent = quiz.choices[i];
+        choiceButton.setAttribute("data-index", i);
+        choiceButton.addEventListener("click", handleChoiceClick);
+        choicesContainer.appendChild(choiceButton);
+      }
+    }
+
+    function handleChoiceClick() {
+      const selectedChoice = Number(this.getAttribute("data-index"));
+      if (selectedChoice === quizData[currentQuestion].correct) {
+        score++;
+        this.style.backgroundColor = "green";
+      } else {
+        this.style.backgroundColor = "red";
+        const correctChoice = document.querySelector(`button[data-index="${quizData[currentQuestion].correct}"]`);
+        correctChoice.style.backgroundColor = "green";
+      }
+
+      currentQuestion++;
+
+      if (currentQuestion < quizData.length) {
+        loadQuestion();
+      } else {
+        showResult();
+      }
+    }
+
+    function showResult() {
+      quizContainer.style.display = "none";
+      resultContainer.style.display = "block";
+      scoreElement.textContent = "正解数: " + score + " / " + quizData.length;
+
+      // 正解の表示
+      correctAnswerElement.innerHTML = "";
+      for (let i = 0; i < quizData.length; i++) {
+        const quiz = quizData[i];
+        const correctIndex = quiz.correct;
+        const correctChoice = quiz.choices[correctIndex];
+        const questionResult = document.createElement("p");
+        questionResult.textContent = "問題 " + (i + 1) + ": 正解は「" + correctChoice + "」でした。";
+        correctAnswerElement.appendChild(questionResult);
+      }
+    }
+
+    // ゲームの開始
+    loadQuestion();
+  </script>
+</body>
+</html>
